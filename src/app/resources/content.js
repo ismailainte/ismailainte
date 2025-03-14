@@ -1,7 +1,7 @@
 import { InlineCode, LetterFx } from "@/once-ui/components";
 
 const person = {
-  firstName: "Mr Sharafdin",
+  firstName: "ISMAILAINTE",
   lastName: "",
   get name() {
     return `${this.firstName} ${this.lastName}`;
@@ -41,7 +41,7 @@ const person = {
     </>
   ),
   avatar: "https://avatars.githubusercontent.com/u/83120892?v=4",
-  location: "Africa/Mogadishu", // Expecting the IANA time zone identifier, e.g., 'Europe/Vienna'
+  location: "Europe/Saumur", // Expecting the IANA time zone identifier, e.g., 'Europe/Vienna'
   languages: ["English", "Somali"], // optional: Leave the array empty if you don't want to display languages
 };
 
@@ -62,17 +62,17 @@ const social = [
   {
     name: "GitHub",
     icon: "github",
-    link: "https://github.com/sharafdin",
+    link: "https://github.com/ismailainte",
   },
   {
     name: "LinkedIn",
     icon: "linkedin",
-    link: "https://www.linkedin.com/in/sharafdin",
+    link: "https://www.linkedin.com/in/ismailainte",
   },
   {
     name: "X",
     icon: "x",
-    link: "https://x.com/isasharafdin",
+    link: "https://x.com/ismailainte",
   },
   {
     name: "Email",
@@ -85,7 +85,7 @@ const home = {
   label: "Home",
   title: `${person.name}`,
   description: `An open-source advocate passionate about creating projects that empower developers and simplify complex problems`,
-  headline: <>Yow, I'm Sharafdin &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</>,
+  headline: <>Yow, I'm Ismailainte &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</>,
   subline: (
     <>
       An open-source advocate passionate about creating projects that empower
@@ -115,7 +115,7 @@ const about = {
     description: (
       <>
         <p>
-          Mr Sharafdin transcends traditional roles, defining himself as a
+          ISMAILAINTE transcends traditional roles, defining himself as a
           self-taught savant in the vast fields of science and technology.
           Rejecting formal titles and academia, he has charted a unique course
           of independent study fueled by unending curiosity and a deep passion
@@ -123,7 +123,7 @@ const about = {
         </p>
         <p>
           His significant contributions to open-source software, available on{" "}
-          <a href="https://github.com/sharafdin" target="_blank">
+          <a href="https://github.com/ismailainte" target="_blank">
             <InlineCode>GitHub</InlineCode>
           </a>
           , mirror his technical prowess and belief in collaborative,
@@ -131,7 +131,7 @@ const about = {
           complex technologies outside conventional education.
         </p>
         <p>
-          Mr Sharafdin's writings on the{" "}
+          ISMAILAINTE's writings on the{" "}
           <a href="https://culuumta.com/" target="_blank">
             <InlineCode>Culuumta</InlineCode>
           </a>{" "}
@@ -146,13 +146,13 @@ const about = {
           <InlineCode>machine learning</InlineCode>, he applies his autodidactic
           expertise to develop innovative solutions, aiming to empower
           organizations with tools for insightful decision-making. Mr
-          Sharafdin's work embodies his vision of leveraging technology to solve
+          ISMAILAINTE's work embodies his vision of leveraging technology to solve
           real challenges.
         </p>
         <p>
           As a mentor, he is dedicated to fostering growth and enlightenment
           beyond the classroom, proving that <InlineCode>self-study</InlineCode>{" "}
-          can lead to remarkable achievements. Mr Sharafdin advocates for{" "}
+          can lead to remarkable achievements. ISMAILAINTE advocates for{" "}
           <InlineCode>knowledge sharing</InlineCode> and{" "}
           <InlineCode>mentorship</InlineCode> as pillars of personal and
           professional development.
@@ -162,20 +162,20 @@ const about = {
           <li>
             <strong>Open Source Software</strong>: Spearheads OSS initiatives,
             sharing projects openly on{" "}
-            <a href="https://github.com/sharafdin" target="_blank">
+            <a href="https://github.com/ismailainte" target="_blank">
               <InlineCode>GitHub</InlineCode>
             </a>
             . His projects serve as benchmarks for innovation and collaboration
             in the tech community. Some notable projects include:
             <ul>
               <li>
-                <a href="https://github.com/sharafdin/yonode" target="_blank">
+                <a href="https://github.com/ismailainte/yonode" target="_blank">
                   <InlineCode>Yonode</InlineCode>
                 </a>
                 : An Open-Source Node.js Toolkit for Rapid Development.
               </li>
               <li>
-                <a href="https://github.com/sharafdin/yocode" target="_blank">
+                <a href="https://github.com/ismailainte/yocode" target="_blank">
                   <InlineCode>Yocode</InlineCode>
                 </a>
                 : A powerful tool that simplifies building{" "}
@@ -185,7 +185,7 @@ const about = {
               </li>
               <li>
                 <a
-                  href="https://github.com/sharafdin/markdown-master"
+                  href="https://github.com/ismailainte/markdown-master"
                   target="_blank"
                 >
                   <InlineCode>Markdown Master</InlineCode>
@@ -195,7 +195,7 @@ const about = {
               </li>
               <li>
                 Explore more projects on{" "}
-                <a href="https://github.com/sharafdin" target="_blank">
+                <a href="https://github.com/ismailainte" target="_blank">
                   <InlineCode>GitHub</InlineCode>
                 </a>
                 .
@@ -226,7 +226,7 @@ const about = {
           </li>
         </ul>
         <p>
-          Mr Sharafdin's journey underscores the power of{" "}
+          ISMAILAINTE's journey underscores the power of{" "}
           <InlineCode>self-education</InlineCode> in driving scientific and
           technological progress. His approach to learning and innovation serves
           as a testament to the impact of pursuing knowledge passionately and

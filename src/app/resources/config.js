@@ -1,4 +1,4 @@
-const baseURL = 'sharafdin.com'
+const baseURL = 'ISMAILAINTE.com'
 
 // Enable localization
 const i18n = false;

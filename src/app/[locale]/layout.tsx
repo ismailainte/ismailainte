@@ -38,7 +38,7 @@ export async function generateMetadata(
 			images: [
 				{
 				  url: 'https://avatars.githubusercontent.com/u/83120892?v=4',
-				  alt: "Sharafdin's github image",
+				  alt: "ISMAILAINTE's github image",
 				},
 			],
 		},

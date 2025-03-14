@@ -11,7 +11,7 @@ All my work are open source.
 - Preferred titles: Mr, Master, Self-Taught Savant
 - Fun fact: I once hacked my own computer to test its security and ended up locking myself out for a while!
 
-**Explore my world:** [Mr Sharafdin](https://sharafdin.com)
+**Explore my world:** [ISMAILAINTE](https://ismailainte.com)
 
 #### Tech Preferences
 
@@ -25,8 +25,8 @@ All my work are open source.
 
 #### Contact
 
-You can find me on Twitter/X [@isasharafdin](https://twitter.com/isasharafdin) - Ask me about **Yonode**, my projects, open source, anything!
+You can find me on Twitter/X [@iSMAILAINTE](https://twitter.com/ismailainte) - Ask me about **Yonode**, my projects, open source, anything!
 
 Warm regards,
 
-Mr Sharafdin
+ISMAILAINTE
