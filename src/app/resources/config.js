@@ -53,7 +53,7 @@ const style = {
 
 const display = {
     location: true,
-    time:     true
+    time:     false
 }
 
 const bottomCard = {
