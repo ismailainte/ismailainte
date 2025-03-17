@@ -24,7 +24,7 @@ export async function generateMetadata({
   const { home } = renderContent(t);
   const title = home.title;
   const description = home.description;
-  const ogImage = `https://avatars.githubusercontent.com/u/83120892?v=4`;
+  const ogImage = `https://avatars.githubusercontent.com/u/86529958?v=4`;
 
   return {
     title,

@@ -40,7 +40,7 @@ const person = {
       </span>
     </>
   ),
-  avatar: "https://avatars.githubusercontent.com/u/83120892?v=4",
+  avatar: "https://avatars.githubusercontent.com/u/86529958?v=4",
   location: "Europe/Saumur", // Expecting the IANA time zone identifier, e.g., 'Europe/Vienna'
   languages: ["English", "Somali"], // optional: Leave the array empty if you don't want to display languages
 };
@@ -85,7 +85,9 @@ const home = {
   label: "Home",
   title: `${person.name}`,
   description: `An open-source advocate passionate about creating projects that empower developers and simplify complex problems`,
-  headline: <>Yow, I'm Ismailainte &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</>,
+  headline: (
+    <>Yow, I'm Ismailainte &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</>
+  ),
   subline: (
     <>
       An open-source advocate passionate about creating projects that empower
@@ -146,8 +148,8 @@ const about = {
           <InlineCode>machine learning</InlineCode>, he applies his autodidactic
           expertise to develop innovative solutions, aiming to empower
           organizations with tools for insightful decision-making. Mr
-          ISMAILAINTE's work embodies his vision of leveraging technology to solve
-          real challenges.
+          ISMAILAINTE's work embodies his vision of leveraging technology to
+          solve real challenges.
         </p>
         <p>
           As a mentor, he is dedicated to fostering growth and enlightenment
