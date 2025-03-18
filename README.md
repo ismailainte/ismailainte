@@ -33,7 +33,7 @@ All my work are open source.
 
 #### Contact
 
-You can find me on Twitter/X [@iSMAILAINTE](https://twitter.com/ismailainte) - Ask me about **Yonode**, my projects, open source, anything!
+You can find me on Twitter/X [ISMAILAINTE](https://twitter.com/ismailainte) - Ask me about **Yonode**, my projects, open source, anything!
 
 Warm regards,
 
