@@ -35,12 +35,22 @@ const createI18nContent = (t) => {
         {
             name: 'X',
             icon: 'x',
-            link: '',
+            link: 'https://x.com/ismailainte',
+        },
+        {
+            name: 'Facebook',
+            icon: 'facebook',
+            link: 'https://facebook.com/ismailainte',
+        },
+        {
+            name: 'Instagram',
+            icon: 'instagram',
+            link: 'https://instagram.com/ismailainte',
         },
         {
             name: 'Email',
             icon: 'email',
-            link: 'mailto:example@gmail.com',
+            link: 'mailto:contact@ismailainte.com',
         },
     ]
 
