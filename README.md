@@ -1,13 +1,7 @@
 <pre>
                                                                                                        
-88                                             88  88              88                                  
-88                                             ""  88              ""                ,d                
-88                                                 88                                88                
-88  ,adPPYba,  88,dPYba,,adPYba,   ,adPPYYba,  88  88  ,adPPYYba,  88  8b,dPPYba,  MM88MMM  ,adPPYba,  
-88  I8[    ""  88P'   "88"    "8a  ""     `Y8  88  88  ""     `Y8  88  88P'   `"8a   88    a8P_____88  
-88   `"Y8ba,   88      88      88  ,adPPPPP88  88  88  ,adPPPPP88  88  88       88   88    8PP"""""""  
-88  aa    ]8I  88      88      88  88,    ,88  88  88  88,    ,88  88  88       88   88,   "8b,   ,aa  
-88  `"YbbdP"'  88      88      88  `"8bbdP"Y8  88  88  `"8bbdP"Y8  88  88       88   "Y888  `"Ybbd8"'  
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/972c5943-2d02-46b3-b476-2dafd676db37" />
+
                                                                                                        
                                                                                                        
 </pre>
