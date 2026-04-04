@@ -3,8 +3,10 @@
 <p align="center">
 
 <a>
-<img width="1536" height="1024" alt="ChatGPT Image Apr 4, 2026, 11_29_16 PM" src="https://github.com/user-attachments/assets/c62cc1f1-e659-4f6d-96bc-a8f80270ee4c" />
+<img width="1536" height="1024" alt="ChatGPT Image Apr 5, 2026, 12_28_55 AM" src="https://github.com/user-attachments/assets/07f6e147-1e32-4b68-b789-6240d6fd4d95" />
+
 </a>
+
 Greetings!
 
 All my work are open source.
