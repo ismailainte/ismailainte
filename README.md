@@ -1,13 +1,6 @@
 <pre>
-                                                                                                       
-<img width="1280" height="640" alt="534448770-e91255af-e4ba-4d71-b1a8-bd081e8a234a" src="https://github.com/user-attachments/assets/3dd85efe-d6cf-4b14-ace3-1ef1088adc8c" />
-
-
-
-                                                                                                       
-                                                                                                       
+<img width="1536" height="1024" alt="ChatGPT Image Apr 4, 2026, 11_29_16 PM" src="https://github.com/user-attachments/assets/c62cc1f1-e659-4f6d-96bc-a8f80270ee4c" />
 </pre>
-
 Greetings!
 
 All my work are open source.
