@@ -1,6 +1,10 @@
-<pre>
+<h1 align="center">ISMAILAINE</h1>
+
+<p align="center">
+
+<a>
 <img width="1536" height="1024" alt="ChatGPT Image Apr 4, 2026, 11_29_16 PM" src="https://github.com/user-attachments/assets/c62cc1f1-e659-4f6d-96bc-a8f80270ee4c" />
-</pre>
+</a>
 Greetings!
 
 All my work are open source.
