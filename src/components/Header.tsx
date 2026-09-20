@@ -133,6 +133,14 @@ export const Header = () => {
                                     <Flex paddingX="2" hide="s">{blog.label}</Flex>
                                 </ToggleButton>
                             )}
+                            { routes['/somali-weyn'] && (
+                                <ToggleButton
+                                    prefixIcon="map"
+                                    href={`/${params?.locale}/somali-weyn`}
+                                    selected={pathname.startsWith('/somali-weyn')}>
+                                    <Flex paddingX="2" hide="s">Soomaali Weyn</Flex>
+                                </ToggleButton>
+                            )}
                             { routes['/gallery'] && (
                                 <ToggleButton
                                     prefixIcon="gallery"
