@@ -15,6 +15,7 @@ const routes = {
     '/work':    false,
     '/blog':    false,
     '/gallery': true,
+    '/somali-weyn': true,
 }
 
 // Enable password protection on selected routes
