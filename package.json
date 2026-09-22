@@ -6,7 +6,9 @@
 		"export": "next export",
 		"build": "next build",
 		"start": "next start",
-		"lint": "next lint"
+		"lint": "next lint",
+		"map:fetch": "node scripts/map/fetch.mjs",
+		"map:generate": "node --max-old-space-size=8192 scripts/map/generate.mjs"
 	},
 	"dependencies": {
 		"@floating-ui/react-dom": "^2.1.1",
@@ -15,7 +17,7 @@
 		"classnames": "^2.5.1",
 		"cookie": "^1.0.1",
 		"gray-matter": "^4.0.3",
-		"next": "^14.2.16",
+		"next": "14.2.18",
 		"next-intl": "^3.23.5",
 		"next-mdx-remote": "^6.0.0",
 		"postcss": "^8.4.39",
@@ -35,6 +37,8 @@
 		"@types/node": "^20",
 		"@types/react": "^18",
 		"@types/react-dom": "^18",
+		"polygon-clipping": "^0.15.7",
+		"polylabel": "^2.1.0",
 		"postcss-custom-media": "^10.0.7",
 		"postcss-flexbugs-fixes": "^5.0.2",
 		"typescript": "^5"
