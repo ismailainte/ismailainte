@@ -61,12 +61,6 @@ export function MapDefs() {
         <rect x={FRAME} y={FRAME} width={MAP_WIDTH - FRAME * 2} height={MAP_HEIGHT - FRAME * 2} />
       </clipPath>
 
-      {/* Everything except Soomaali Weyn: a full-frame rectangle with the union
-          punched out by the even-odd rule. */}
-      <clipPath id="outside-weyn">
-        <path d={`M0 0H${MAP_WIDTH}V${MAP_HEIGHT}H0Z${SOMALI_WEYN}`} clipRule="evenodd" />
-      </clipPath>
-
       <clipPath id="weyn-clip">
         <path d={SOMALI_WEYN} clipRule="evenodd" />
       </clipPath>
