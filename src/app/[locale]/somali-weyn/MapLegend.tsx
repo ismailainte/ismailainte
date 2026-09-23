@@ -150,7 +150,7 @@ export function MapLegend({ detail }: { detail?: LegendDetail }) {
         <KeyRow y={720} label="Major City">
           <circle cx={X + 44} cy={720} r={8} fill="#111111" />
         </KeyRow>
-        <KeyRow y={751} label="National and International Borders">
+        <KeyRow y={751} label="Soomaali Weyn Outer Boundary">
           <line x1={X + 22} y1={751} x2={X + 62} y2={751} stroke="#111111" strokeWidth="5" />
         </KeyRow>
         <KeyRow y={782} label="Provincial Borders">
