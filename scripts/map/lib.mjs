@@ -114,6 +114,43 @@ export const multiArea = (multi) =>
     0,
   );
 
+const EARTH_RADIUS_KM = 6371.0088;
+const radians = (degrees) => (degrees * Math.PI) / 180;
+
+/** Great-circle distance between two longitude/latitude points. */
+export const haversineKm = ([lon1, lat1], [lon2, lat2]) => {
+  const dLat = radians(lat2 - lat1);
+  const dLon = radians(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(radians(lat1)) * Math.cos(radians(lat2)) * Math.sin(dLon / 2) ** 2;
+  return 2 * EARTH_RADIUS_KM * Math.asin(Math.min(1, Math.sqrt(a)));
+};
+
+/** Spherical surface area, used for the public km² figure rather than pixels. */
+export const geodesicRingAreaKm2 = (ring) => {
+  let sum = 0;
+  for (let i = 0; i < ring.length - 1; i++) {
+    const [lon1, lat1] = ring[i];
+    const [lon2, lat2] = ring[i + 1];
+    let dLon = radians(lon2 - lon1);
+    if (dLon > Math.PI) dLon -= 2 * Math.PI;
+    if (dLon < -Math.PI) dLon += 2 * Math.PI;
+    sum += dLon * (2 + Math.sin(radians(lat1)) + Math.sin(radians(lat2)));
+  }
+  return Math.abs(sum) * EARTH_RADIUS_KM ** 2 / 2;
+};
+
+export const geodesicMultiAreaKm2 = (multi) =>
+  multi.reduce(
+    (total, poly) =>
+      total + poly.reduce(
+        (area, ring, index) => area + (index ? -1 : 1) * geodesicRingAreaKm2(ring),
+        0,
+      ),
+    0,
+  );
+
 export const ringToPath = (ring, tolerance, close = true) => {
   const projected = ring.map(([lon, lat]) => [px(lon), py(lat)]);
   const thinned = simplify(projected, tolerance);
