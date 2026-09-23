@@ -23,6 +23,8 @@ export const CITIES: Place[] = [
   { name: "Berbera", lon: 45.01, lat: 10.44 },
   { name: "Hurdiyo", lon: 51.14, lat: 10.58, side: "left" },
   { name: "Boorama", lon: 43.18, lat: 9.94 },
+  { name: "Diridhaba", lon: 41.87, lat: 9.60, side: "left", dy: -12 },
+  { name: "Harar", lon: 42.12, lat: 9.31, side: "left", dy: 12 },
   { name: "Hargeisa", lon: 44.07, lat: 9.56 },
   { name: "Burco", lon: 45.53, lat: 9.52 },
   { name: "Qardho", lon: 49.09, lat: 9.5, side: "left" },

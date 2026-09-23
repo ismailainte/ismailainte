@@ -83,6 +83,23 @@ for (const feature of read("ne_countries").features) {
 const ethRegions = read("ETH_ADM1");
 const ogadenGeom = ethRegions.features.find((f) => f.properties.shapeName === "Somali").geometry;
 const ogaden = safeDifference(ogadenGeom, somalia, djibouti);
+// Harar and Diridhaba sit immediately west of the Somali Region and are part
+// of the wider historical/cultural map represented here. Keep their published
+// administrative outlines intact instead of drawing an invented claim line.
+const WESTERN_HISTORIC_NAMES = new Set(["Dire Dawa", "Hareri"]);
+const westernHistoricFeatures = ethRegions.features.filter((f) =>
+  WESTERN_HISTORIC_NAMES.has(f.properties.shapeName),
+);
+// East Harerge is the surrounding corridor that joins Harar and Diridhaba to
+// the Somali Region. Including the whole published unit keeps the western edge
+// closed and lets its districts and towns participate in drill-down/search.
+const hararConnectorFeatures = read("ETH_ADM2").features.filter(
+  (f) => f.properties.shapeName === "East Harerge",
+);
+const westernHistoric = [...westernHistoricFeatures, ...hararConnectorFeatures].reduce(
+  (acc, feature) => safeUnion(acc, toMulti(feature.geometry)),
+  [],
+);
 
 const kenRegions = read("KEN_ADM1");
 const NFD = new Set(["Mandera", "Wajir", "Garissa"]);
@@ -117,7 +134,7 @@ const tanaStrip = clipTo(
   northOfTana,
 );
 
-const weyn = [somalia, djibouti, ogaden, nfd, tanaStrip, socotra].reduce(
+const weyn = [somalia, djibouti, ogaden, westernHistoric, nfd, tanaStrip, socotra].reduce(
   (acc, part) => safeUnion(acc, part),
   [],
 );
@@ -140,6 +157,9 @@ for (const feature of read("ETH_ADM2").features) {
   if (!inMulti(centreOf(feature.geometry), ogadenRaw)) continue;
   const trimmed = safeDifference(feature.geometry, somalia, djibouti);
   if (trimmed.length) provinces.push(multiToPath(trimmed, PROVINCE_TOLERANCE));
+}
+for (const feature of westernHistoricFeatures) {
+  provinces.push(geomToPath(feature.geometry, PROVINCE_TOLERANCE));
 }
 for (const feature of nfdFeatures) {
   const trimmed = safeDifference(feature.geometry, somalia, ogaden);
@@ -227,6 +247,15 @@ for (const feature of read("ETH_ADM2").features) {
   const name = preferredName(feature.properties.shapeName);
   addRegion({ id: `et-${slug(name)}`, name, group: "Somali Region", multi, source: "ETH" });
 }
+for (const feature of westernHistoricFeatures) {
+  const multi = toMulti(feature.geometry);
+  const raw = feature.properties.shapeName;
+  const name = raw === "Dire Dawa" ? "Diridhaba" : "Harar";
+  const regionMulti = raw === "Hareri"
+    ? hararConnectorFeatures.reduce((acc, connector) => safeUnion(acc, toMulti(connector.geometry)), multi)
+    : multi;
+  addRegion({ id: `et-${slug(name)}`, name, group: "Soomaali Galbeed", multi: regionMulti, source: "ETH" });
+}
 for (const feature of [...nfdFeatures, ...tanaFeatures]) {
   const raw = feature.properties.shapeName;
   const multi = NFD.has(raw)
@@ -261,7 +290,7 @@ const SOURCES = {
 };
 const TERRITORY = {
   SOM: somalia,
-  ETH: ogaden,
+  ETH: safeUnion(ogaden, westernHistoric),
   KEN: Array.from(regionShapes.values())
     .filter((shape) => shape.source === "KEN")
     .reduce((acc, shape) => safeUnion(acc, shape.multi), []),

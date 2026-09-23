@@ -22,8 +22,8 @@ npm run map:generate   # rewrites the generated files
 
 - **Natural Earth 1:10m** (public domain) — coastlines, countries, rivers, lakes,
   and the first-level units outside Soomaali Weyn.
-- **geoBoundaries gbOpen** (CC BY 4.0) — SOM/KEN/DJI ADM1 and ADM2, ETH ADM2 and
-  ADM3, YEM ADM2. Attribution is required if this is published.
+- **geoBoundaries gbOpen** (CC BY 4.0) — SOM/KEN/DJI ADM1 and ADM2, ETH ADM1,
+  ADM2 and ADM3, YEM ADM2. Attribution is required if this is published.
 - **GeoNames** (CC BY 4.0) — populated places for the town layer.
 
 ## Notes
@@ -40,3 +40,11 @@ npm run map:generate   # rewrites the generated files
 - Known gaps: Djibouti's Arta region has no ADM2 children in gbOpen, so it is a
   leaf. Ethiopia's ADM3 release predates the current woreda list, so the Somali
   Region resolves to 55 units rather than the ~90 it has today.
+- Harar and Diridhaba are included using their published Ethiopian ADM1
+  outlines, with East Harerge joining Harar to the Somali Region so its
+  districts and towns remain contiguous and searchable. This is a
+  historical/cultural Soomaali Weyn presentation, not a statement of
+  internationally recognised modern borders.
+
+The generated Harar region therefore includes the surrounding East Harerge
+districts rather than appearing as an isolated enclave.
