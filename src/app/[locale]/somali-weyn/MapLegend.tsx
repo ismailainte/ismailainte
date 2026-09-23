@@ -1,4 +1,5 @@
 import { CoatOfArms } from "./CoatOfArms";
+import { MAP_STATS } from "./mapGeometry";
 
 export const LEGEND_BOX = { x: 1180, y: 295, width: 636, height: 736 };
 
@@ -7,24 +8,6 @@ const RIGHT = X + W;
 
 const BAR_X = 1330;
 const BAR_W = 340;
-
-type KeyRowProps = {
-  y: number;
-  label: string;
-  size?: number;
-  children: React.ReactNode;
-};
-
-function KeyRow({ y, label, size = 20, children }: KeyRowProps) {
-  return (
-    <g>
-      {children}
-      <text x={X + 70} y={y} fontSize={size} dominantBaseline="middle">
-        {label}
-      </text>
-    </g>
-  );
-}
 
 type BarProps = {
   y: number;
@@ -51,6 +34,54 @@ function Bar({ y, left, centre, right, children }: BarProps) {
   );
 }
 
+type KeyRowProps = {
+  y: number;
+  label: string;
+  size?: number;
+  children: React.ReactNode;
+};
+
+function KeyRow({ y, label, size = 20, children }: KeyRowProps) {
+  return (
+    <g>
+      {children}
+      <text x={X + 70} y={y} fontSize={size} dominantBaseline="middle">
+        {label}
+      </text>
+    </g>
+  );
+}
+
+function MapKeys() {
+  return (
+    <g>
+      <KeyRow y={676} label="CAPITAL" size={36}>
+        <circle cx={X + 44} cy={676} r={11} fill="none" stroke="#111111" strokeWidth="3.5" />
+      </KeyRow>
+      <KeyRow y={720} label="Major City">
+        <circle cx={X + 44} cy={720} r={8} fill="#111111" />
+      </KeyRow>
+      <KeyRow y={751} label="Soomaali Weyn Outer Boundary">
+        <line x1={X + 22} y1={751} x2={X + 62} y2={751} stroke="#111111" strokeWidth="5" />
+      </KeyRow>
+      <KeyRow y={782} label="Provincial Borders">
+        <line x1={X + 22} y1={782} x2={X + 62} y2={782} stroke="#a3252b" strokeWidth="3" />
+      </KeyRow>
+      <KeyRow y={813} label="Rivers">
+        <line x1={X + 22} y1={813} x2={X + 62} y2={813} stroke="#2d6f9e" strokeWidth="3" />
+      </KeyRow>
+      <KeyRow y={846} label="Lakes">
+        <path
+          d="M1202 850 C1210 840 1222 856 1232 846 C1240 838 1244 848 1242 852 C1234 860 1220 848 1212 856 C1206 861 1202 856 1202 850 Z"
+          fill="none"
+          stroke="#2d6f9e"
+          strokeWidth="2.5"
+        />
+      </KeyRow>
+    </g>
+  );
+}
+
 export type LegendDetail = {
   kicker: string;
   title: string;
@@ -65,8 +96,7 @@ const titleSize = (title: string) => {
   return 25;
 };
 
-function DetailRows({ rows }: { rows: LegendDetail["rows"] }) {
-  const top = 690;
+function DetailRows({ rows, top = 690 }: { rows: LegendDetail["rows"]; top?: number }) {
   const step = 42;
   return (
     <g>
@@ -95,13 +125,22 @@ function DetailRows({ rows }: { rows: LegendDetail["rows"] }) {
 }
 
 export function MapLegend({ detail }: { detail?: LegendDetail }) {
+  const overview = !detail;
+  const lowerOffset = overview ? 230 : 0;
+  const overviewRows = [
+    { label: "Bedka guud", value: `${MAP_STATS.areaKm2.toLocaleString("en-US")} km²` },
+    { label: "Gobollada", value: MAP_STATS.regions.toLocaleString("en-US") },
+    { label: "Webiyada", value: MAP_STATS.rivers.toLocaleString("en-US") },
+    { label: "Dhererka xeebta", value: `${MAP_STATS.coastlineKm.toLocaleString("en-US")} km` },
+    { label: "Jasiiradaha", value: String(MAP_STATS.islands) },
+  ];
   return (
     <g fontFamily="Georgia, 'Times New Roman', serif" fill="#111111" pointerEvents="none">
       <rect
         x={X}
         y={Y}
         width={W}
-        height={LEGEND_BOX.height}
+        height={LEGEND_BOX.height + lowerOffset}
         fill="#ffffff"
         stroke="#111111"
         strokeWidth="3"
@@ -124,7 +163,7 @@ export function MapLegend({ detail }: { detail?: LegendDetail }) {
       {/* title, which becomes the name of whatever is selected */}
       <g textAnchor="middle">
         <text x={X + 318} y={582} fontSize={23} letterSpacing="1.5">
-          {detail ? detail.kicker : "FEDERAL REPUBLIC OF"}
+          {detail ? detail.kicker : "DHULKA"}
         </text>
         <text
           x={X + 318}
@@ -133,50 +172,25 @@ export function MapLegend({ detail }: { detail?: LegendDetail }) {
           fontWeight="700"
           letterSpacing={detail ? 1.5 : 3}
         >
-          {detail ? detail.title.toUpperCase() : "SOMALIA"}
+          {detail ? detail.title.toUpperCase() : "SOOMAALI WEYN"}
         </text>
       </g>
 
       <line x1={X} y1={646} x2={RIGHT} y2={646} stroke="#111111" strokeWidth="3" />
 
-      {/* keys, replaced by the selection's details once something is open */}
-      {detail ? (
-        <DetailRows rows={detail.rows} />
-      ) : (
-      <g>
-        <KeyRow y={676} label="CAPITAL" size={36}>
-          <circle cx={X + 44} cy={676} r={11} fill="none" stroke="#111111" strokeWidth="3.5" />
-        </KeyRow>
-        <KeyRow y={720} label="Major City">
-          <circle cx={X + 44} cy={720} r={8} fill="#111111" />
-        </KeyRow>
-        <KeyRow y={751} label="Soomaali Weyn Outer Boundary">
-          <line x1={X + 22} y1={751} x2={X + 62} y2={751} stroke="#111111" strokeWidth="5" />
-        </KeyRow>
-        <KeyRow y={782} label="Provincial Borders">
-          <line x1={X + 22} y1={782} x2={X + 62} y2={782} stroke="#a3252b" strokeWidth="3" />
-        </KeyRow>
-        <KeyRow y={813} label="Rivers">
-          <line x1={X + 22} y1={813} x2={X + 62} y2={813} stroke="#2d6f9e" strokeWidth="3" />
-        </KeyRow>
-        <KeyRow y={846} label="Lakes">
-          <path
-            d="M1202 850 C1210 840 1222 856 1232 846 C1240 838 1244 848 1242 852 C1234 860 1220 848 1212 856 C1206 861 1202 856 1202 850 Z"
-            fill="none"
-            stroke="#2d6f9e"
-            strokeWidth="2.5"
-          />
-        </KeyRow>
-      </g>
-      )}
+      {overview && <MapKeys />}
 
-      <line x1={X} y1={872} x2={RIGHT} y2={872} stroke="#111111" strokeWidth="3" />
+      {/* Keep the original keys intact, then add the overview figures beneath them. */}
+      <DetailRows rows={detail ? detail.rows : overviewRows} top={overview ? 910 : 690} />
+
+      {overview && <line x1={X} y1={872} x2={RIGHT} y2={872} stroke="#111111" strokeWidth="3" />}
+      <line x1={X} y1={872 + lowerOffset} x2={RIGHT} y2={872 + lowerOffset} stroke="#111111" strokeWidth="3" />
 
       {/* measurement bars */}
-      <Bar y={902} left="0 m" centre="Bathymetry" right="10,000 m">
+      <Bar y={902 + lowerOffset} left="0 m" centre="Bathymetry" right="10,000 m">
         <rect
           x={BAR_X}
-          y={910}
+          y={910 + lowerOffset}
           width={BAR_W}
           height={16}
           fill="url(#legend-bathymetry)"
@@ -185,10 +199,10 @@ export function MapLegend({ detail }: { detail?: LegendDetail }) {
         />
       </Bar>
 
-      <Bar y={951} left="Low" centre="Elevation" right="High">
+      <Bar y={951 + lowerOffset} left="Low" centre="Elevation" right="High">
         <rect
           x={BAR_X}
-          y={959}
+          y={959 + lowerOffset}
           width={BAR_W}
           height={16}
           fill="url(#legend-elevation)"
@@ -197,14 +211,14 @@ export function MapLegend({ detail }: { detail?: LegendDetail }) {
         />
       </Bar>
 
-      <Bar y={1000} left="0 km" centre="Scale" right="500 km">
+      <Bar y={1000 + lowerOffset} left="0 km" centre="Scale" right="500 km">
         <g stroke="#111111" strokeWidth="2">
-          <rect x={BAR_X} y={1008} width={BAR_W} height={16} fill="#ffffff" />
+          <rect x={BAR_X} y={1008 + lowerOffset} width={BAR_W} height={16} fill="#ffffff" />
           {Array.from({ length: 5 }, (_, i) => (
             <rect
               key={i}
               x={BAR_X + (i * 2 * BAR_W) / 10}
-              y={1008}
+              y={1008 + lowerOffset}
               width={BAR_W / 10}
               height={16}
               fill="#111111"
