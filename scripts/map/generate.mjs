@@ -90,7 +90,13 @@ const WESTERN_HISTORIC_NAMES = new Set(["Dire Dawa", "Hareri"]);
 const westernHistoricFeatures = ethRegions.features.filter((f) =>
   WESTERN_HISTORIC_NAMES.has(f.properties.shapeName),
 );
-const westernHistoric = westernHistoricFeatures.reduce(
+// East Harerge is the surrounding corridor that joins Harar and Diridhaba to
+// the Somali Region. Including the whole published unit keeps the western edge
+// closed and lets its districts and towns participate in drill-down/search.
+const hararConnectorFeatures = read("ETH_ADM2").features.filter(
+  (f) => f.properties.shapeName === "East Harerge",
+);
+const westernHistoric = [...westernHistoricFeatures, ...hararConnectorFeatures].reduce(
   (acc, feature) => safeUnion(acc, toMulti(feature.geometry)),
   [],
 );
@@ -245,7 +251,10 @@ for (const feature of westernHistoricFeatures) {
   const multi = toMulti(feature.geometry);
   const raw = feature.properties.shapeName;
   const name = raw === "Dire Dawa" ? "Diridhaba" : "Harar";
-  addRegion({ id: `et-${slug(name)}`, name, group: "Soomaali Galbeed", multi, source: "ETH" });
+  const regionMulti = raw === "Hareri"
+    ? hararConnectorFeatures.reduce((acc, connector) => safeUnion(acc, toMulti(connector.geometry)), multi)
+    : multi;
+  addRegion({ id: `et-${slug(name)}`, name, group: "Soomaali Galbeed", multi: regionMulti, source: "ETH" });
 }
 for (const feature of [...nfdFeatures, ...tanaFeatures]) {
   const raw = feature.properties.shapeName;
