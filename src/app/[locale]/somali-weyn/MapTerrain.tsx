@@ -66,19 +66,8 @@ export function MapTerrain() {
         strokeWidth="2.6"
         vectorEffect="non-scaling-stroke"
       />
-      <g clipPath="url(#outside-weyn)">
-        <path
-          d={ALL_LAND}
-          fill="none"
-          stroke="#111111"
-          strokeWidth="3.4"
-          fillRule="evenodd"
-          vectorEffect="non-scaling-stroke"
-        />
-      </g>
-      {/* Soomaali Weyn is one polygon, so its outline carries no internal edges.
-          It is stroked last so the provincial lines of the edge regions do not
-          paint over it. */}
+      {/* Only Soomaali Weyn's outer edge is black. Former international borders
+          inside the combined territory remain ordinary red provincial lines. */}
       <path
         d={SOMALI_WEYN}
         fill="none"
