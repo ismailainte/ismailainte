@@ -132,7 +132,7 @@ export function MapLegend({ detail }: { detail?: LegendDetail }) {
     { label: "Gobollada", value: MAP_STATS.regions.toLocaleString("en-US") },
     { label: "Webiyada", value: MAP_STATS.rivers.toLocaleString("en-US") },
     { label: "Dhererka xeebta", value: `${MAP_STATS.coastlineKm.toLocaleString("en-US")} km` },
-    { label: "Jasiiradaha", value: MAP_STATS.islands.toLocaleString("en-US") },
+    { label: "Jasiiradaha", value: String(MAP_STATS.islands) },
   ];
   return (
     <g fontFamily="Georgia, 'Times New Roman', serif" fill="#111111" pointerEvents="none">
