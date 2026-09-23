@@ -40,6 +40,8 @@ npm run map:generate   # rewrites the generated files
 - Known gaps: Djibouti's Arta region has no ADM2 children in gbOpen, so it is a
   leaf. Ethiopia's ADM3 release predates the current woreda list, so the Somali
   Region resolves to 55 units rather than the ~90 it has today.
-- Harar and Diridhaba are included using their published Ethiopian ADM1 outlines
-  as part of this historical/cultural Soomaali Weyn presentation; the map is not
-  a statement of internationally recognised modern borders.
+- Harar and Diridhaba are included using their published Ethiopian ADM1
+  outlines, with East Harerge joining Harar to the Somali Region so its
+  districts and towns remain contiguous and searchable. This is a
+  historical/cultural Soomaali Weyn presentation, not a statement of
+  internationally recognised modern borders.
