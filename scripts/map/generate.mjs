@@ -275,15 +275,17 @@ for (const feature of read("SOM_ADM1").features) {
     ? expandedBanadir
     : safeDifference(clipTo(feature.geometry, somalia), expandedBanadir);
   if (!multi.length) continue;
-  const name = preferredName(feature.properties.shapeName);
-  addRegion({ id: `so-${slug(name)}`, name, group: "Somalia", multi, source: "SOM" });
+  const raw = feature.properties.shapeName;
+  const name = preferredName(raw);
+  addRegion({ id: `so-${slug(raw)}`, name, group: "Soomaaliya", multi, source: "SOM" });
 }
 for (const feature of read("ETH_ADM2").features) {
   if (!inMulti(centreOf(feature.geometry), ogadenRaw)) continue;
   const multi = clipTo(feature.geometry, ogaden);
   if (!multi.length) continue;
-  const name = preferredName(feature.properties.shapeName);
-  addRegion({ id: `et-${slug(name)}`, name, group: "Somali Region", multi, source: "ETH" });
+  const raw = feature.properties.shapeName;
+  const name = preferredName(raw);
+  addRegion({ id: `et-${slug(raw)}`, name, group: "Soomaali Galbeed", multi, source: "ETH" });
 }
 for (const feature of westernHistoricFeatures) {
   const multi = toMulti(feature.geometry);
@@ -301,16 +303,17 @@ for (const feature of [...nfdFeatures, ...tanaFeatures]) {
     : clipTo(feature.geometry, northOfTana);
   if (!multi.length) continue;
   const name = preferredName(raw);
-  addRegion({ id: `ke-${slug(name)}`, name, group: "NFD", multi, source: "KEN" });
+  addRegion({ id: `ke-${slug(raw)}`, name, group: "Waqooyi Bari Kenya (NFD)", multi, source: "KEN" });
 }
 for (const feature of read("DJI_ADM1").features) {
   const multi = clipTo(feature.geometry, djibouti);
   if (!multi.length) continue;
-  const name = preferredName(feature.properties.shapeName);
-  addRegion({ id: `dj-${slug(name)}`, name, group: "Djibouti", multi, source: "DJI" });
+  const raw = feature.properties.shapeName;
+  const name = preferredName(raw);
+  addRegion({ id: `dj-${slug(raw)}`, name, group: "Jabuuti", multi, source: "DJI" });
 }
 if (socotra.length) {
-  addRegion({ id: "sq-socotra", name: "Socotra", group: "Socotra", multi: socotra, source: "YEM" });
+  addRegion({ id: "sq-socotra", name: "Suqadara", group: "Suqadara", multi: socotra, source: "YEM" });
 }
 
 // --- districts -------------------------------------------------------------
