@@ -101,6 +101,47 @@ const westernHistoric = [...westernHistoricFeatures, ...hararConnectorFeatures].
   [],
 );
 
+// Banaadir was enlarged in 2024 with Garasbaaley, Daarusalaam and Gubadley.
+// The public ADM files still contain the older municipal outline, so this
+// land-clipped envelope follows the expanded boundary shown by Google Maps
+// (including the Muqdisho Cusub / north-eastern coastal extension).
+const banadirSource = read("SOM_ADM1").features.find(
+  (feature) => feature.properties.shapeName.toLowerCase() === "banadir",
+);
+const oldBanadir = toMulti(banadirSource.geometry);
+const BANADIR_2024_ENVELOPE = [[[
+  [45.145, 1.94],
+  [45.125, 2.075],
+  [45.105, 2.14],
+  [45.155, 2.205],
+  [45.295, 2.205],
+  [45.425, 2.305],
+  [45.76, 2.35],
+  [45.82, 1.90],
+  [45.145, 1.94],
+]]];
+const expandedBanadir = safeUnion(oldBanadir, clipTo(BANADIR_2024_ENVELOPE, somalia));
+const banadirExpansion = safeDifference(expandedBanadir, oldBanadir);
+
+// Approximate municipal partitions inside only the newly added land. Their
+// union is the entire expansion; the 17 established district polygons remain
+// untouched. This can be replaced by an official COD layer when one is issued.
+const rectangle = (minLon, minLat, maxLon, maxLat) => [[[
+  [minLon, minLat], [maxLon, minLat], [maxLon, maxLat], [minLon, maxLat], [minLon, minLat],
+]]];
+const garasbaaley = clipTo(banadirExpansion, rectangle(45.05, 1.85, 45.285, 2.19));
+const expansionWithoutGarasbaaley = safeDifference(banadirExpansion, garasbaaley);
+const daarusalaamMask = [[[
+  [45.05, 2.17], [45.31, 2.17], [45.47, 2.36], [45.05, 2.36], [45.05, 2.17],
+]]];
+const daarusalaam = clipTo(expansionWithoutGarasbaaley, daarusalaamMask);
+const gubadley = safeDifference(expansionWithoutGarasbaaley, daarusalaam);
+const NEW_BANADIR_DISTRICTS = [
+  ["Garasbaaley", garasbaaley],
+  ["Daarusalaam", daarusalaam],
+  ["Gubadley", gubadley],
+];
+
 const kenRegions = read("KEN_ADM1");
 const NFD = new Set(["Mandera", "Wajir", "Garissa"]);
 const TANA_CLAIM = new Set(["Tana River", "Lamu"]);
@@ -149,7 +190,11 @@ for (const feature of neAdmin1.features) {
   provinces.push(geomToPath(feature.geometry, PROVINCE_TOLERANCE));
 }
 for (const feature of read("SOM_ADM1").features) {
-  provinces.push(geomToPath(feature.geometry, PROVINCE_TOLERANCE));
+  const isBanadir = feature.properties.shapeName.toLowerCase() === "banadir";
+  const multi = isBanadir
+    ? expandedBanadir
+    : safeDifference(feature.geometry, expandedBanadir);
+  if (multi.length) provinces.push(multiToPath(multi, PROVINCE_TOLERANCE));
 }
 // Natural Earth knows the Somali Region as one polygon; its zones come from ADM2.
 const ogadenRaw = toMulti(ogadenGeom);
@@ -235,7 +280,10 @@ const addRegion = ({ id, name, group, multi, source }) => {
 };
 
 for (const feature of read("SOM_ADM1").features) {
-  const multi = clipTo(feature.geometry, somalia);
+  const isBanadir = feature.properties.shapeName.toLowerCase() === "banadir";
+  const multi = isBanadir
+    ? expandedBanadir
+    : safeDifference(clipTo(feature.geometry, somalia), expandedBanadir);
   if (!multi.length) continue;
   const name = preferredName(feature.properties.shapeName);
   addRegion({ id: `so-${slug(name)}`, name, group: "Somalia", multi, source: "SOM" });
@@ -311,6 +359,22 @@ const districts = {};
 const districtShapes = new Map();
 let unmatched = 0;
 
+// Insert the new Banaadir districts first so towns in the expansion resolve to
+// them before the older neighbouring Afgooye, Balcad and Warsheekh polygons.
+for (const [name, multi] of NEW_BANADIR_DISTRICTS) {
+  if (!multi.length) continue;
+  const regionId = "so-banadir";
+  const id = `${regionId}-${slug(name)}`;
+  (districts[regionId] ||= []).push({
+    id,
+    name,
+    d: multiToPath(multi, 0.2, MIN_DISTRICT_PART),
+    bounds: boundsOf(multi),
+    label: labelPoint(multi),
+  });
+  districtShapes.set(id, { regionId, multi, bbox: bboxOf(multi) });
+}
+
 const distanceToRegion = (centre, shape) => {
   const [minLon, minLat, maxLon, maxLat] = shape.bbox;
   return Math.hypot(
@@ -327,7 +391,7 @@ for (const [source, features] of Object.entries(SOURCES)) {
     const bbox = bboxOf(feature.geometry.coordinates);
     if (!candidates.some(({ shape }) => overlaps(bbox, shape.bbox))) continue;
 
-    const clipped = clipTo(feature.geometry, TERRITORY[source]);
+    let clipped = clipTo(feature.geometry, TERRITORY[source]);
     if (!clipped.length || multiArea(clipped) < MIN_DISTRICT_PART) continue;
 
     const name = preferredName(feature.properties.shapeName);
@@ -355,6 +419,13 @@ for (const [source, features] of Object.entries(SOURCES)) {
     if (!best) {
       unmatched++;
       continue;
+    }
+
+    // The source ADM2 layer predates the Banaadir enlargement. Remove the new
+    // municipal land from neighbouring legacy districts to avoid overlaps.
+    if (source === "SOM" && best.id !== "so-banadir") {
+      clipped = safeDifference(clipped, expandedBanadir);
+      if (!clipped.length || multiArea(clipped) < MIN_DISTRICT_PART) continue;
     }
 
     const id = `${best.id}-${slug(name)}`;
