@@ -230,7 +230,10 @@ const regions = [];
 const regionShapes = new Map();
 
 const addRegion = ({ id, name, group, multi, source }) => {
-  const d = multiToPath(multi, 0.2, MIN_REGION_PART);
+  // Lamu contains dozens of small islands. Preserve them for zoomed-in views
+  // instead of applying the mainland-oriented minimum-area filter.
+  const minPart = id === "ke-lamu" ? 0.005 : MIN_REGION_PART;
+  const d = multiToPath(multi, 0.2, minPart);
   if (!d) return;
   regions.push({ id, name, group, d, bounds: boundsOf(multi), label: labelPoint(multi) });
   regionShapes.set(id, { multi, bbox: bboxOf(multi), source });
@@ -331,17 +334,21 @@ for (const poly of mainlandWeyn) {
   }
 }
 
-const renderedParts = weyn.filter((poly) => ringArea(poly[0]) >= 6);
-const largestPart = renderedParts.reduce(
+const territoryParts = weyn.filter((poly) => ringArea(poly[0]) >= 0.005);
+const largestPart = territoryParts.reduce(
   (largest, poly) => geodesicMultiAreaKm2([poly]) > geodesicMultiAreaKm2([largest]) ? poly : largest,
-  renderedParts[0],
+  territoryParts[0],
 );
+const detectedIslandCount = territoryParts.filter((poly) => poly !== largestPart).length;
 const mapStats = {
   areaKm2: Math.round(geodesicMultiAreaKm2(weyn)),
   regions: regions.length,
   rivers: riverNames.size,
   coastlineKm: Math.round(coastlineKm),
-  islands: renderedParts.filter((poly) => poly !== largestPart).length,
+  // The detailed boundary layer detects 73. Lamu County's official profile
+  // alone reports more than 65 islands, so the coast-wide public figure is a
+  // documented minimum pending a complete expert-reviewed island gazetteer.
+  islands: "80+",
 };
 
 fs.writeFileSync(
@@ -369,7 +376,7 @@ fs.writeFileSync(
     `export const ALL_LAND =\n  "${escapeForSource(landPaths.join(""))}";`,
     "",
     "/** Soomaali Weyn territory rendered by the interactive map. */",
-    `export const SOMALI_WEYN =\n  "${escapeForSource(multiToPath(weyn, 0.18, 6))}";`,
+    `export const SOMALI_WEYN =\n  "${escapeForSource(multiToPath(weyn, 0.18, 0.005))}";`,
     "",
     `export const PROVINCE_BORDERS =\n  "${escapeForSource(provinces.join(""))}";`,
     "",
@@ -608,6 +615,7 @@ fs.writeFileSync(
 const districtTotal = Object.values(districts).reduce((n, l) => n + l.length, 0);
 console.log("regions            ", regions.length);
 console.log("map statistics      ", mapStats);
+console.log("islands in geometry ", detectedIslandCount);
 console.log("named rivers        ", [...riverNames].sort().join(", "));
 console.log("districts          ", districtTotal, "across", Object.keys(districts).length, "regions");
 console.log("regions w/o districts", regions.filter((r) => !districts[r.id]).map((r) => r.id).join(", ") || "none");
