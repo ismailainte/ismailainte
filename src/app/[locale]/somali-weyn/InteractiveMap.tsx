@@ -345,6 +345,19 @@ export function InteractiveMap() {
                   onHover={setHovered}
                 />
               ))}
+              {/* Keep the selected region itself above neighbouring regions.
+                  This catch-all makes every point inside an enlarged/adjusted
+                  region belong to it even where source district vintages leave
+                  a tiny seam between polygons. Districts remain on top. */}
+              {selection.region ? (
+                <ClickableArea
+                  area={selection.region}
+                  active={false}
+                  focusable={false}
+                  onSelect={onRegionPath}
+                  onHover={setHovered}
+                />
+              ) : null}
               {districts.map((district) => (
                 <ClickableArea
                   key={district.id}
