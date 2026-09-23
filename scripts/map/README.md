@@ -45,3 +45,6 @@ npm run map:generate   # rewrites the generated files
   districts and towns remain contiguous and searchable. This is a
   historical/cultural Soomaali Weyn presentation, not a statement of
   internationally recognised modern borders.
+
+The generated Harar region therefore includes the surrounding East Harerge
+districts rather than appearing as an isolated enclave.
