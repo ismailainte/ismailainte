@@ -101,6 +101,37 @@ const westernHistoric = [...westernHistoricFeatures, ...hararConnectorFeatures].
   [],
 );
 
+// Banaadir was enlarged in 2024 with Garasbaaley, Daarusalaam and Gubadley.
+// The public ADM files still contain the older municipal outline, so this
+// land-clipped envelope follows the expanded boundary shown by Google Maps
+// (including the Muqdisho Cusub / north-eastern coastal extension).
+const banadirSource = read("SOM_ADM1").features.find(
+  (feature) => feature.properties.shapeName.toLowerCase() === "banadir",
+);
+const oldBanadir = toMulti(banadirSource.geometry);
+const BANADIR_2024_ENVELOPE = [[[
+  [45.145, 1.94],
+  [45.125, 2.075],
+  [45.105, 2.14],
+  [45.155, 2.205],
+  [45.295, 2.205],
+  [45.425, 2.305],
+  [45.76, 2.35],
+  [45.82, 1.90],
+  [45.145, 1.94],
+]]];
+const expandedBanadir = safeUnion(oldBanadir, clipTo(BANADIR_2024_ENVELOPE, somalia));
+// Approximate municipal partition masks for the three new districts. They are
+// applied after the 17 established districts have been generated, so every
+// remaining part of expanded Banaadir belongs to one of the new districts.
+// This can be replaced by an official COD layer when one is issued.
+const rectangle = (minLon, minLat, maxLon, maxLat) => [[[
+  [minLon, minLat], [maxLon, minLat], [maxLon, maxLat], [minLon, maxLat], [minLon, minLat],
+]]];
+const daarusalaamMask = [[[
+  [45.05, 2.17], [45.31, 2.17], [45.47, 2.36], [45.05, 2.36], [45.05, 2.17],
+]]];
+
 const kenRegions = read("KEN_ADM1");
 const NFD = new Set(["Mandera", "Wajir", "Garissa"]);
 const TANA_CLAIM = new Set(["Tana River", "Lamu"]);
@@ -149,7 +180,11 @@ for (const feature of neAdmin1.features) {
   provinces.push(geomToPath(feature.geometry, PROVINCE_TOLERANCE));
 }
 for (const feature of read("SOM_ADM1").features) {
-  provinces.push(geomToPath(feature.geometry, PROVINCE_TOLERANCE));
+  const isBanadir = feature.properties.shapeName.toLowerCase() === "banadir";
+  const multi = isBanadir
+    ? expandedBanadir
+    : safeDifference(feature.geometry, expandedBanadir);
+  if (multi.length) provinces.push(multiToPath(multi, PROVINCE_TOLERANCE));
 }
 // Natural Earth knows the Somali Region as one polygon; its zones come from ADM2.
 const ogadenRaw = toMulti(ogadenGeom);
@@ -235,17 +270,22 @@ const addRegion = ({ id, name, group, multi, source }) => {
 };
 
 for (const feature of read("SOM_ADM1").features) {
-  const multi = clipTo(feature.geometry, somalia);
+  const isBanadir = feature.properties.shapeName.toLowerCase() === "banadir";
+  const multi = isBanadir
+    ? expandedBanadir
+    : safeDifference(clipTo(feature.geometry, somalia), expandedBanadir);
   if (!multi.length) continue;
-  const name = preferredName(feature.properties.shapeName);
-  addRegion({ id: `so-${slug(name)}`, name, group: "Somalia", multi, source: "SOM" });
+  const raw = feature.properties.shapeName;
+  const name = preferredName(raw);
+  addRegion({ id: `so-${slug(raw)}`, name, group: "Soomaaliya", multi, source: "SOM" });
 }
 for (const feature of read("ETH_ADM2").features) {
   if (!inMulti(centreOf(feature.geometry), ogadenRaw)) continue;
   const multi = clipTo(feature.geometry, ogaden);
   if (!multi.length) continue;
-  const name = preferredName(feature.properties.shapeName);
-  addRegion({ id: `et-${slug(name)}`, name, group: "Somali Region", multi, source: "ETH" });
+  const raw = feature.properties.shapeName;
+  const name = preferredName(raw);
+  addRegion({ id: `et-${slug(raw)}`, name, group: "Soomaali Galbeed", multi, source: "ETH" });
 }
 for (const feature of westernHistoricFeatures) {
   const multi = toMulti(feature.geometry);
@@ -263,16 +303,17 @@ for (const feature of [...nfdFeatures, ...tanaFeatures]) {
     : clipTo(feature.geometry, northOfTana);
   if (!multi.length) continue;
   const name = preferredName(raw);
-  addRegion({ id: `ke-${slug(name)}`, name, group: "NFD", multi, source: "KEN" });
+  addRegion({ id: `ke-${slug(raw)}`, name, group: "Waqooyi Bari Kenya (NFD)", multi, source: "KEN" });
 }
 for (const feature of read("DJI_ADM1").features) {
   const multi = clipTo(feature.geometry, djibouti);
   if (!multi.length) continue;
-  const name = preferredName(feature.properties.shapeName);
-  addRegion({ id: `dj-${slug(name)}`, name, group: "Djibouti", multi, source: "DJI" });
+  const raw = feature.properties.shapeName;
+  const name = preferredName(raw);
+  addRegion({ id: `dj-${slug(raw)}`, name, group: "Jabuuti", multi, source: "DJI" });
 }
 if (socotra.length) {
-  addRegion({ id: "sq-socotra", name: "Socotra", group: "Socotra", multi: socotra, source: "YEM" });
+  addRegion({ id: "sq-socotra", name: "Suqadara", group: "Suqadara", multi: socotra, source: "YEM" });
 }
 
 // --- districts -------------------------------------------------------------
@@ -327,7 +368,7 @@ for (const [source, features] of Object.entries(SOURCES)) {
     const bbox = bboxOf(feature.geometry.coordinates);
     if (!candidates.some(({ shape }) => overlaps(bbox, shape.bbox))) continue;
 
-    const clipped = clipTo(feature.geometry, TERRITORY[source]);
+    let clipped = clipTo(feature.geometry, TERRITORY[source]);
     if (!clipped.length || multiArea(clipped) < MIN_DISTRICT_PART) continue;
 
     const name = preferredName(feature.properties.shapeName);
@@ -357,6 +398,13 @@ for (const [source, features] of Object.entries(SOURCES)) {
       continue;
     }
 
+    // The source ADM2 layer predates the Banaadir enlargement. Remove the new
+    // municipal land from neighbouring legacy districts to avoid overlaps.
+    if (source === "SOM" && best.id !== "so-banadir") {
+      clipped = safeDifference(clipped, expandedBanadir);
+      if (!clipped.length || multiArea(clipped) < MIN_DISTRICT_PART) continue;
+    }
+
     const id = `${best.id}-${slug(name)}`;
     const d = multiToPath(clipped, 0.2, MIN_DISTRICT_PART);
     if (!d) continue;
@@ -369,6 +417,38 @@ for (const [source, features] of Object.entries(SOURCES)) {
     });
     districtShapes.set(id, { regionId: best.id, multi: clipped, bbox: bboxOf(clipped) });
   }
+}
+
+// Fill the whole enlarged Banaadir region. The older ADM1 and ADM2 releases do
+// not share an exact edge, so using only the outer expansion can leave slivers
+// that still receive clicks from Lower or Middle Shabelle. Subtract every
+// established Banaadir district first, then partition every remaining point
+// among the three new districts.
+const legacyBanadir = Array.from(districtShapes.values())
+  .filter((shape) => shape.regionId === "so-banadir")
+  .reduce((acc, shape) => safeUnion(acc, shape.multi), []);
+const availableBanadir = safeDifference(expandedBanadir, legacyBanadir);
+const garasbaaley = clipTo(availableBanadir, rectangle(45.05, 1.85, 45.285, 2.19));
+const withoutGarasbaaley = safeDifference(availableBanadir, garasbaaley);
+const daarusalaam = clipTo(withoutGarasbaaley, daarusalaamMask);
+const gubadley = safeDifference(withoutGarasbaaley, daarusalaam);
+
+for (const [name, multi] of [
+  ["Garasbaaley", garasbaaley],
+  ["Daarusalaam", daarusalaam],
+  ["Gubadley", gubadley],
+]) {
+  if (!multi.length) continue;
+  const regionId = "so-banadir";
+  const id = `${regionId}-${slug(name)}`;
+  (districts[regionId] ||= []).push({
+    id,
+    name,
+    d: multiToPath(multi, 0.2, MIN_DISTRICT_PART),
+    bounds: boundsOf(multi),
+    label: labelPoint(multi),
+  });
+  districtShapes.set(id, { regionId, multi, bbox: bboxOf(multi) });
 }
 for (const list of Object.values(districts)) list.sort((a, b) => a.name.localeCompare(b.name));
 

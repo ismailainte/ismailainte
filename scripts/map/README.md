@@ -25,6 +25,9 @@ npm run map:generate   # rewrites the generated files
 - **geoBoundaries gbOpen** (CC BY 4.0) — SOM/KEN/DJI ADM1 and ADM2, ETH ADM1,
   ADM2 and ADM3, YEM ADM2. Attribution is required if this is published.
 - **GeoNames** (CC BY 4.0) — populated places for the town layer.
+- **Google Maps (visual reference, September 2026)** — the enlarged Banaadir
+  presentation boundary shown for Muqdisho Cusub. The outline is traced as a
+  map presentation aid because a downloadable official polygon was unavailable.
 
 ## Notes
 
@@ -48,3 +51,8 @@ npm run map:generate   # rewrites the generated files
 
 The generated Harar region therefore includes the surrounding East Harerge
 districts rather than appearing as an isolated enclave.
+
+- Banaadir uses the enlarged Google Maps outline and includes the three
+  districts recognised in 2024: Garasbaaley, Daarusalaam and Gubadley. Their
+  provisional internal partitions are explicitly marked in the generator so
+  they can be replaced when an authoritative public boundary layer is released.
