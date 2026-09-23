@@ -121,26 +121,16 @@ const BANADIR_2024_ENVELOPE = [[[
   [45.145, 1.94],
 ]]];
 const expandedBanadir = safeUnion(oldBanadir, clipTo(BANADIR_2024_ENVELOPE, somalia));
-const banadirExpansion = safeDifference(expandedBanadir, oldBanadir);
-
-// Approximate municipal partitions inside only the newly added land. Their
-// union is the entire expansion; the 17 established district polygons remain
-// untouched. This can be replaced by an official COD layer when one is issued.
+// Approximate municipal partition masks for the three new districts. They are
+// applied after the 17 established districts have been generated, so every
+// remaining part of expanded Banaadir belongs to one of the new districts.
+// This can be replaced by an official COD layer when one is issued.
 const rectangle = (minLon, minLat, maxLon, maxLat) => [[[
   [minLon, minLat], [maxLon, minLat], [maxLon, maxLat], [minLon, maxLat], [minLon, minLat],
 ]]];
-const garasbaaley = clipTo(banadirExpansion, rectangle(45.05, 1.85, 45.285, 2.19));
-const expansionWithoutGarasbaaley = safeDifference(banadirExpansion, garasbaaley);
 const daarusalaamMask = [[[
   [45.05, 2.17], [45.31, 2.17], [45.47, 2.36], [45.05, 2.36], [45.05, 2.17],
 ]]];
-const daarusalaam = clipTo(expansionWithoutGarasbaaley, daarusalaamMask);
-const gubadley = safeDifference(expansionWithoutGarasbaaley, daarusalaam);
-const NEW_BANADIR_DISTRICTS = [
-  ["Garasbaaley", garasbaaley],
-  ["Daarusalaam", daarusalaam],
-  ["Gubadley", gubadley],
-];
 
 const kenRegions = read("KEN_ADM1");
 const NFD = new Set(["Mandera", "Wajir", "Garissa"]);
@@ -359,22 +349,6 @@ const districts = {};
 const districtShapes = new Map();
 let unmatched = 0;
 
-// Insert the new Banaadir districts first so towns in the expansion resolve to
-// them before the older neighbouring Afgooye, Balcad and Warsheekh polygons.
-for (const [name, multi] of NEW_BANADIR_DISTRICTS) {
-  if (!multi.length) continue;
-  const regionId = "so-banadir";
-  const id = `${regionId}-${slug(name)}`;
-  (districts[regionId] ||= []).push({
-    id,
-    name,
-    d: multiToPath(multi, 0.2, MIN_DISTRICT_PART),
-    bounds: boundsOf(multi),
-    label: labelPoint(multi),
-  });
-  districtShapes.set(id, { regionId, multi, bbox: bboxOf(multi) });
-}
-
 const distanceToRegion = (centre, shape) => {
   const [minLon, minLat, maxLon, maxLat] = shape.bbox;
   return Math.hypot(
@@ -440,6 +414,38 @@ for (const [source, features] of Object.entries(SOURCES)) {
     });
     districtShapes.set(id, { regionId: best.id, multi: clipped, bbox: bboxOf(clipped) });
   }
+}
+
+// Fill the whole enlarged Banaadir region. The older ADM1 and ADM2 releases do
+// not share an exact edge, so using only the outer expansion can leave slivers
+// that still receive clicks from Lower or Middle Shabelle. Subtract every
+// established Banaadir district first, then partition every remaining point
+// among the three new districts.
+const legacyBanadir = Array.from(districtShapes.values())
+  .filter((shape) => shape.regionId === "so-banadir")
+  .reduce((acc, shape) => safeUnion(acc, shape.multi), []);
+const availableBanadir = safeDifference(expandedBanadir, legacyBanadir);
+const garasbaaley = clipTo(availableBanadir, rectangle(45.05, 1.85, 45.285, 2.19));
+const withoutGarasbaaley = safeDifference(availableBanadir, garasbaaley);
+const daarusalaam = clipTo(withoutGarasbaaley, daarusalaamMask);
+const gubadley = safeDifference(withoutGarasbaaley, daarusalaam);
+
+for (const [name, multi] of [
+  ["Garasbaaley", garasbaaley],
+  ["Daarusalaam", daarusalaam],
+  ["Gubadley", gubadley],
+]) {
+  if (!multi.length) continue;
+  const regionId = "so-banadir";
+  const id = `${regionId}-${slug(name)}`;
+  (districts[regionId] ||= []).push({
+    id,
+    name,
+    d: multiToPath(multi, 0.2, MIN_DISTRICT_PART),
+    bounds: boundsOf(multi),
+    label: labelPoint(multi),
+  });
+  districtShapes.set(id, { regionId, multi, bbox: bboxOf(multi) });
 }
 for (const list of Object.values(districts)) list.sort((a, b) => a.name.localeCompare(b.name));
 
