@@ -273,7 +273,7 @@ for (const feature of [...nfdFeatures, ...tanaFeatures]) {
     : clipTo(feature.geometry, northOfTana);
   if (!multi.length) continue;
   const name = preferredName(raw);
-  addRegion({ id: `ke-${slug(raw)}`, name, group: "Waqooyi Bari Kenya (NFD)", multi, source: "KEN" });
+  addRegion({ id: `ke-${slug(raw)}`, name, group: "Koonfur Bari Soomaaliya", multi, source: "KEN" });
 }
 for (const feature of read("DJI_ADM1").features) {
   const multi = clipTo(feature.geometry, djibouti);
