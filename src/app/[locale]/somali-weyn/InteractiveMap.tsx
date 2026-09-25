@@ -398,3 +398,89 @@ export function InteractiveMap() {
               <AreaLabels areas={REGIONS} scale={view.k} size={19} muted />
             ) : null}
           </g>
+
+          <g className={styles.legend}>
+            <MapLegend detail={detail} />
+          </g>
+
+          {hovered ? (
+            <text
+              x={1000}
+              y={800}
+              textAnchor="middle"
+              fontFamily="Georgia, 'Times New Roman', serif"
+              fontSize={32}
+              fontWeight="700"
+              fill="#111111"
+              stroke="rgba(255, 255, 255, 0.92)"
+              strokeWidth={7}
+              paintOrder="stroke fill"
+              pointerEvents="none"
+            >
+              {hovered}
+            </text>
+          ) : null}
+        </g>
+
+        <MapFrame showDegrees={view.k < 1.02} />
+      </svg>
+
+      <div className={styles.topBar}>
+        <nav className={styles.breadcrumb} aria-label="Map location">
+          <button type="button" onClick={showAll} disabled={!selection.region}>
+            Soomaali Weyn
+          </button>
+          {selection.region ? (
+            <>
+              <span aria-hidden>/</span>
+              <button
+                type="button"
+                onClick={backToRegion}
+                disabled={!selection.district && !selection.town}
+              >
+                {selection.region.name}
+              </button>
+            </>
+          ) : null}
+          {selection.district ? (
+            <>
+              <span aria-hidden>/</span>
+              <button type="button" onClick={backToDistrict} disabled={!selection.town}>
+                {selection.district.name}
+              </button>
+            </>
+          ) : null}
+          {selection.town ? (
+            <>
+              <span aria-hidden>/</span>
+              <span className={styles.current}>{selection.town.name}</span>
+            </>
+          ) : null}
+        </nav>
+
+        <MapSearch onPick={onSearchPick} />
+      </div>
+
+      <div className={styles.controls}>
+        <button type="button" onClick={zoomIn} aria-label="Zoom in">
+          +
+        </button>
+        <button type="button" onClick={zoomOut} aria-label="Zoom out">
+          −
+        </button>
+        <button type="button" onClick={goUp} aria-label="Go up one level" disabled={!selection.region}>
+          ↑
+        </button>
+        <button type="button" onClick={showAll} aria-label="Reset the map">
+          ⤾
+        </button>
+      </div>
+
+      <MapDetailCard detail={detail} />
+
+      <p className={styles.hint} aria-live="polite">
+        {loading ? "Loading places…" : status}
+      </p>
+    </div>
+  );
+}
