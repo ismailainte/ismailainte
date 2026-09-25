@@ -361,10 +361,10 @@ export function InteractiveMap() {
         viewBox={`0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`}
         preserveAspectRatio="xMidYMid meet"
         role="img"
-        aria-labelledby="somali-weyn-title somali-weyn-desc"
+        aria-label="Soomaali Weyn"
+        aria-describedby="somali-weyn-desc"
         {...handlers}
       >
-        <title id="somali-weyn-title">Interactive physical map of Soomaali Weyn</title>
         <desc id="somali-weyn-desc">
           Relief map of Soomaali Weyn. Scroll or pinch to zoom, drag to pan, and select a region to
           open its districts and towns.
