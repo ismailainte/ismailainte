@@ -8,6 +8,7 @@ import { LegendDetail, MapLegend } from "./MapLegend";
 import { MapSearch, SearchHit } from "./MapSearch";
 import { MapFrame, MapTerrain } from "./MapTerrain";
 import { DISTRICTS } from "./mapDistricts";
+import { DISTRICT_AREAS_KM2, REGION_AREAS_KM2 } from "./mapAreas";
 import { MAP_HEIGHT, MAP_WIDTH, unprojectX, unprojectY } from "./mapGeometry";
 import { Area, REGIONS, Region } from "./mapRegions";
 import { Town, loadRegionTowns, useRegionTowns } from "./mapTowns";
@@ -24,6 +25,7 @@ const TOWN_FRAME = 26;
 const REGION_BY_ID = new Map(REGIONS.map((region) => [region.id, region]));
 
 type Selection = { region?: Region; district?: Area; town?: Town };
+type HoverCard = { area: Area; x: number; y: number };
 
 /** Deeper zoom earns smaller places a label. */
 const labelRankFor = (scale: number) => {
@@ -51,7 +53,7 @@ function ClickableArea({
   active: boolean;
   focusable: boolean;
   onSelect: (area: Area) => void;
-  onHover: (name: string | null) => void;
+  onHover: (area: Area | null, event?: React.MouseEvent<SVGPathElement>) => void;
 }) {
   return (
     <path
@@ -62,9 +64,10 @@ function ClickableArea({
       tabIndex={focusable ? 0 : -1}
       aria-label={area.name}
       aria-pressed={active}
-      onMouseEnter={() => onHover(area.name)}
+      onMouseEnter={(event) => onHover(area, event)}
+      onMouseMove={(event) => onHover(area, event)}
       onMouseLeave={() => onHover(null)}
-      onFocus={() => onHover(area.name)}
+      onFocus={() => onHover(area)}
       onBlur={() => onHover(null)}
       onClick={() => onSelect(area)}
       onKeyDown={(event) => {
@@ -80,7 +83,7 @@ function ClickableArea({
 export function InteractiveMap() {
   const { view, svgRef, dragged, handlers, zoomIn, zoomOut, flyToBounds, reset } = useMapViewport();
   const [selection, setSelection] = useState<Selection>({});
-  const [hovered, setHovered] = useState<string | null>(null);
+  const [hovered, setHovered] = useState<HoverCard | null>(null);
 
   const { towns, loading } = useRegionTowns(selection.region?.id);
 
@@ -88,6 +91,26 @@ export function InteractiveMap() {
     () => (selection.region ? (DISTRICTS[selection.region.id] ?? []) : []),
     [selection.region],
   );
+
+  const onHover = useCallback((area: Area | null, event?: React.MouseEvent<SVGPathElement>) => {
+    if (!area) {
+      setHovered(null);
+      return;
+    }
+    const svg = event?.currentTarget.ownerSVGElement;
+    if (!event || !svg) {
+      setHovered((current) => ({ area, x: current?.x ?? 24, y: current?.y ?? 180 }));
+      return;
+    }
+    const rect = svg.getBoundingClientRect();
+    const rawX = event.clientX - rect.left;
+    const rawY = event.clientY - rect.top;
+    setHovered({
+      area,
+      x: rawX > rect.width * 0.68 ? Math.max(12, rawX - 300) : Math.min(rect.width - 292, rawX + 18),
+      y: Math.max(125, Math.min(rect.height - 125, rawY)),
+    });
+  }, []);
 
   const openRegion = useCallback(
     (region: Region) => {
@@ -200,6 +223,37 @@ export function InteractiveMap() {
     return `${Math.abs(lat).toFixed(2)}°${lat < 0 ? "S" : "N"}, ${Math.abs(lon).toFixed(2)}°${lon < 0 ? "W" : "E"}`;
   };
 
+  const hoverDetail = useMemo<LegendDetail | undefined>(() => {
+    if (!hovered) return undefined;
+    const directRegion = REGION_BY_ID.get(hovered.area.id);
+    const region = directRegion ?? selection.region;
+    if (!region) return undefined;
+    if (!directRegion) {
+      return {
+        kicker: "DISTRICT",
+        title: hovered.area.name,
+        rows: [
+          { label: "Region", value: region.name },
+          { label: "Group", value: region.group },
+          { label: "Places", value: String(towns.filter((town) => town.districtId === hovered.area.id).length) },
+          { label: "Centre", value: coordinates(hovered.area.label[0], hovered.area.label[1]) },
+          { label: "Bedka", value: `${DISTRICT_AREAS_KM2[hovered.area.id].toLocaleString("en-US")} km²` },
+        ],
+      };
+    }
+    return {
+      kicker: "REGION",
+      title: region.name,
+      rows: [
+        { label: "Group", value: region.group },
+        { label: "Districts", value: String((DISTRICTS[region.id] ?? []).length) },
+        { label: "Places", value: String(region.towns) },
+        { label: "Centre", value: coordinates(region.label[0], region.label[1]) },
+        { label: "Bedka", value: `${REGION_AREAS_KM2[region.id].toLocaleString("en-US")} km²` },
+      ],
+    };
+  }, [hovered, selection.region, towns]);
+
   const detail = useMemo<LegendDetail | undefined>(() => {
     if (selection.town) {
       return {
@@ -307,10 +361,10 @@ export function InteractiveMap() {
         viewBox={`0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`}
         preserveAspectRatio="xMidYMid meet"
         role="img"
-        aria-labelledby="somali-weyn-title somali-weyn-desc"
+        aria-label="Soomaali Weyn"
+        aria-describedby="somali-weyn-desc"
         {...handlers}
       >
-        <title id="somali-weyn-title">Interactive physical map of Soomaali Weyn</title>
         <desc id="somali-weyn-desc">
           Relief map of Soomaali Weyn. Scroll or pinch to zoom, drag to pan, and select a region to
           open its districts and towns.
@@ -340,7 +394,7 @@ export function InteractiveMap() {
                      the background regions drop out of it. */
                   focusable={!selection.region}
                   onSelect={onRegionPath}
-                  onHover={setHovered}
+                  onHover={onHover}
                 />
               ))}
               {/* Keep the selected region itself above neighbouring regions.
@@ -353,7 +407,7 @@ export function InteractiveMap() {
                   active={false}
                   focusable={false}
                   onSelect={onRegionPath}
-                  onHover={setHovered}
+                  onHover={onHover}
                 />
               ) : null}
               {districts.map((district) => (
@@ -363,7 +417,7 @@ export function InteractiveMap() {
                   active={district.id === selection.district?.id}
                   focusable
                   onSelect={onDistrictPath}
-                  onHover={setHovered}
+                  onHover={onHover}
                 />
               ))}
             </g>
@@ -403,23 +457,6 @@ export function InteractiveMap() {
             <MapLegend detail={detail} />
           </g>
 
-          {hovered ? (
-            <text
-              x={1000}
-              y={800}
-              textAnchor="middle"
-              fontFamily="Georgia, 'Times New Roman', serif"
-              fontSize={32}
-              fontWeight="700"
-              fill="#111111"
-              stroke="rgba(255, 255, 255, 0.92)"
-              strokeWidth={7}
-              paintOrder="stroke fill"
-              pointerEvents="none"
-            >
-              {hovered}
-            </text>
-          ) : null}
         </g>
 
         <MapFrame showDegrees={view.k < 1.02} />
@@ -477,6 +514,25 @@ export function InteractiveMap() {
       </div>
 
       <MapDetailCard detail={detail} />
+
+      {hovered && hoverDetail ? (
+        <aside
+          className={styles.hoverCard}
+          style={{ left: hovered.x, top: hovered.y }}
+          aria-hidden="true"
+        >
+          <p>{hoverDetail.kicker}</p>
+          <h2>{hoverDetail.title}</h2>
+          <dl>
+            {hoverDetail.rows.map((row) => (
+              <div key={row.label}>
+                <dt>{row.label}</dt>
+                <dd>{row.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </aside>
+      ) : null}
 
       <p className={styles.hint} aria-live="polite">
         {loading ? "Loading places…" : status}
