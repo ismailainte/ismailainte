@@ -291,9 +291,7 @@ export function InteractiveMap() {
   const veil = focus ? `M0 0H${MAP_WIDTH}V${MAP_HEIGHT}H0Z${focus.d}` : null;
   const labelRank = labelRankFor(view.k);
 
-  const status = hovered
-    ? hovered
-    : selection.town
+  const status = selection.town
     ? `${selection.town.name} · ${selection.district?.name ?? ""}`
     : selection.district
       ? `${selection.district.name} · ${towns.filter((t) => t.districtId === selection.district?.id).length} places`
@@ -404,6 +402,24 @@ export function InteractiveMap() {
           <g className={styles.legend}>
             <MapLegend detail={detail} />
           </g>
+
+          {hovered ? (
+            <text
+              x={1000}
+              y={800}
+              textAnchor="middle"
+              fontFamily="Georgia, 'Times New Roman', serif"
+              fontSize={32}
+              fontWeight="700"
+              fill="#111111"
+              stroke="rgba(255, 255, 255, 0.92)"
+              strokeWidth={7}
+              paintOrder="stroke fill"
+              pointerEvents="none"
+            >
+              {hovered}
+            </text>
+          ) : null}
         </g>
 
         <MapFrame showDegrees={view.k < 1.02} />
