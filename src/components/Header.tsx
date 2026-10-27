@@ -141,12 +141,12 @@ export const Header = () => {
                                     <Flex paddingX="2" hide="s">{gallery.label}</Flex>
                                 </ToggleButton>
                             )}
-                            { routes['/somali-weyn'] && (
+                            { routes['/somaliland'] && (
                                 <ToggleButton
                                     prefixIcon="globe"
-                                    href={`/${params?.locale}/somali-weyn`}
-                                    selected={pathname.startsWith('/somali-weyn')}>
-                                    <Flex paddingX="2" hide="s">Somalia</Flex>
+                                    href={`/${params?.locale}/somaliland`}
+                                    selected={pathname.startsWith('/somaliland')}>
+                                    <Flex paddingX="2" hide="s">Somaliland</Flex>
                                 </ToggleButton>
                             )}
                         </Flex>

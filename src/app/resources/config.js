@@ -1,4 +1,4 @@
-const baseURL = 'ISMAILAINTE.com'
+const baseURL = 'www.ismailainte.com'
 
 // Enable localization
 const i18n = false;
@@ -15,7 +15,7 @@ const routes = {
     '/work':    false,
     '/blog':    false,
     '/gallery': true,
-    '/somali-weyn': true,
+    '/somaliland': true,
 }
 
 // Enable password protection on selected routes
