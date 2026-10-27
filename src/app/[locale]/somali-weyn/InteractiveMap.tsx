@@ -465,7 +465,7 @@ export function InteractiveMap() {
       <div className={styles.topBar}>
         <nav className={styles.breadcrumb} aria-label="Map location">
           <button type="button" onClick={showAll} disabled={!selection.region}>
-            Soomaali Weyn
+            SOMALILAND
           </button>
           {selection.region ? (
             <>

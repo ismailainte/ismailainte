@@ -172,7 +172,7 @@ export function MapLegend({ detail }: { detail?: LegendDetail }) {
           fontWeight="700"
           letterSpacing={detail ? 1.5 : 3}
         >
-          {detail ? detail.title.toUpperCase() : "SOOMAALI WEYN"}
+          {detail ? detail.title.toUpperCase() : "SOMALILAND"}
         </text>
       </g>
 

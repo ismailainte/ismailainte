@@ -12,7 +12,7 @@ export function MapDetailCard({ detail }: { detail?: LegendDetail }) {
   return (
     <aside className={styles.detailCard} aria-live="polite">
       <p className={styles.detailKicker}>{detail ? detail.kicker : "MAP"}</p>
-      <h2 className={styles.detailTitle}>{detail ? detail.title : "Soomaali Weyn"}</h2>
+      <h2 className={styles.detailTitle}>{detail ? detail.title : "SOMALILAND"}</h2>
       <dl className={styles.detailRows}>
         {detail ? (
           detail.rows.map((row) => (
